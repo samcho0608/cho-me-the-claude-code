@@ -1,0 +1,9 @@
+{
+  "_comment": "Expected output stub for fixtures/spaghetti_mermaid.md",
+  "expected_diagrams_min": 1,
+  "expected_vis_metrics": {
+    "L_vis_global_min": 0.5,
+    "node_count_min": 5,
+    "edge_count_min": 8
+  }
+}

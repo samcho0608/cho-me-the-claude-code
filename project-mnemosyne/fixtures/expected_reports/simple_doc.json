@@ -1,0 +1,10 @@
+{
+  "_comment": "Expected output stub for fixtures/simple_doc.md — clean baseline, no major issues",
+  "expected_issues": [],
+  "expected_global_metrics": {
+    "L_txt_max": 0.2,
+    "L_vis_max": 0.0,
+    "C_load_max": 0.2
+  },
+  "expected_friction_index_max": 20
+}

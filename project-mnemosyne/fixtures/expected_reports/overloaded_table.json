@@ -1,0 +1,10 @@
+{
+  "_comment": "Expected output stub for fixtures/overloaded_table.md",
+  "expected_issues": [
+    {
+      "type": "table_overloaded",
+      "severity": "medium",
+      "confidence_min": 0.90
+    }
+  ]
+}

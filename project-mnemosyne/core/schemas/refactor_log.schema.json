@@ -1,0 +1,136 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "RefactorLog",
+  "description": "Log of a single refactor operation applied to a document, referencing the originating cognition report.",
+  "type": "object",
+  "required": [
+    "manifest_version",
+    "analyzer_version",
+    "analysis_mode",
+    "source_hash",
+    "source_file",
+    "analysis_timestamp",
+    "refactored_at",
+    "transformations_applied",
+    "sections_skipped",
+    "unresolved_warnings"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "manifest_version": {
+      "type": "string",
+      "description": "Semantic version of the refactor log manifest format (e.g. \"1.0.0\")."
+    },
+    "analyzer_version": {
+      "type": "string",
+      "description": "Semantic version of the Mnemosyne analyzer that produced the source cognition report."
+    },
+    "analysis_mode": {
+      "type": "string",
+      "enum": ["fast", "precise"],
+      "description": "Execution mode that was used during the originating analysis pass."
+    },
+    "source_hash": {
+      "type": "string",
+      "description": "SHA-256 hash of the source file at the time of analysis, must match the cognition report source_hash."
+    },
+    "source_file": {
+      "type": "string",
+      "description": "Absolute or relative path to the source file that was refactored."
+    },
+    "analysis_timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 date-time at which the originating analysis completed (from the cognition report)."
+    },
+    "refactored_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 date-time at which this refactor operation completed."
+    },
+    "transformations_applied": {
+      "type": "array",
+      "description": "Ordered list of transformations applied to the document during this refactor operation.",
+      "items": {
+        "$ref": "#/definitions/Transformation"
+      }
+    },
+    "sections_skipped": {
+      "type": "array",
+      "description": "Sections that were excluded from refactoring, with reasons.",
+      "items": {
+        "$ref": "#/definitions/SkippedSection"
+      }
+    },
+    "unresolved_warnings": {
+      "type": "array",
+      "description": "Warnings from the originating cognition report that remain unresolved after refactoring.",
+      "items": {
+        "$ref": "#/definitions/Warning"
+      }
+    }
+  },
+  "definitions": {
+    "Transformation": {
+      "type": "object",
+      "description": "A single transformation applied to a section of the document.",
+      "required": ["type", "section_id", "description", "safety_class"],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "Machine-readable transformation type identifier (e.g. 'reorder_paragraphs', 'simplify_sentence')."
+        },
+        "section_id": {
+          "type": "string",
+          "description": "Identifier of the section this transformation targets, matching a section id in the cognition report."
+        },
+        "description": {
+          "type": "string",
+          "description": "Human-readable description of what was changed and why."
+        },
+        "safety_class": {
+          "type": "string",
+          "enum": ["safe", "moderate", "high-risk"],
+          "description": "Risk classification for this transformation: 'safe' preserves semantics, 'moderate' may alter emphasis, 'high-risk' may alter meaning."
+        }
+      }
+    },
+    "SkippedSection": {
+      "type": "object",
+      "description": "A section that was intentionally excluded from refactoring.",
+      "required": ["section_id", "reason"],
+      "additionalProperties": false,
+      "properties": {
+        "section_id": {
+          "type": "string",
+          "description": "Identifier of the skipped section, matching a section id in the cognition report."
+        },
+        "reason": {
+          "type": "string",
+          "description": "Explanation of why this section was not refactored."
+        }
+      }
+    },
+    "Warning": {
+      "type": "object",
+      "description": "A non-fatal warning carried over from the originating cognition report.",
+      "required": ["type", "module", "message"],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "Machine-readable warning type identifier."
+        },
+        "module": {
+          "type": "string",
+          "description": "Name of the analyzer module that emitted this warning."
+        },
+        "message": {
+          "type": "string",
+          "description": "Human-readable warning message."
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "_comment": "Expected output stub for fixtures/missing_definition.md",
+  "expected_issues": [
+    {
+      "type": "forward_reference",
+      "note": "Terms like JWKS, ECDSA, JWT used without local definition"
+    }
+  ],
+  "expected_warnings_min": 0
+}

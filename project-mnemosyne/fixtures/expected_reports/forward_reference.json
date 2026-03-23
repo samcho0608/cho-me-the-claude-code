@@ -1,0 +1,21 @@
+{
+  "_comment": "Expected output stub for fixtures/forward_reference.md",
+  "expected_forward_references_min": 2,
+  "expected_issues": [
+    {
+      "type": "forward_reference",
+      "term": "CognitionBridge",
+      "severity": "high",
+      "confidence_min": 0.70
+    },
+    {
+      "type": "forward_reference",
+      "term": "MetricAggregator",
+      "severity": "high",
+      "confidence_min": 0.70
+    }
+  ],
+  "expected_global_metrics": {
+    "L_txt_min": 0.1
+  }
+}

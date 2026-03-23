@@ -1,0 +1,19 @@
+{
+  "name": "mnemosyne",
+  "version": "0.1.0",
+  "description": "Local-first cognitive load analyzer and refactoring tool for technical documents",
+  "author": {
+    "name": "samcho"
+  },
+  "license": "MIT",
+  "keywords": [
+    "cognitive-load",
+    "document-analysis",
+    "refactoring",
+    "technical-writing",
+    "markdown",
+    "mermaid",
+    "local-first"
+  ],
+  "skills": "./skills/"
+}

@@ -1,0 +1,30 @@
+{
+  "weights": {
+    "w_txt": 0.45,
+    "w_vis": 0.30,
+    "w_spa": 0.25
+  },
+  "max_analysis_age_hours": 24,
+  "analysis_mode": "fast",
+  "thresholds": {
+    "paragraph_max_words": 150,
+    "sentence_max_words": 35,
+    "table_max_columns": 8,
+    "table_max_rows": 30,
+    "html_spatial_px_threshold": 400,
+    "xlsx_sheet_change_penalty": 0.3,
+    "docx_cross_page_penalty": 0.2,
+    "subprocess_timeout_seconds": 60,
+    "technical_density_window_tokens": 50
+  },
+  "confidence_bands": {
+    "strong": 0.90,
+    "likely": 0.70,
+    "plausible": 0.40,
+    "weak_threshold": 0.40
+  },
+  "normalization": {
+    "expose_friction_index": true,
+    "friction_index_scale": 100
+  }
+}

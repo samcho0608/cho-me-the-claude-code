@@ -1,0 +1,6 @@
+{
+  "_comment": "Expected output stub for fixtures/low_confidence.md",
+  "expected_high_confidence_issues": 0,
+  "expected_low_confidence_in_warnings": true,
+  "note": "Ambiguous terms like 'factor' and 'threshold' should appear in warnings[] with confidence < 0.40, not in forward_references[]"
+}

@@ -1,0 +1,295 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "CognitionReport",
+  "description": "Analysis report output produced by the Mnemosyne cognitive-load analyzer for a single source document.",
+  "type": "object",
+  "required": [
+    "manifest_version",
+    "analyzer_version",
+    "analysis_mode",
+    "source_file",
+    "source_hash",
+    "document_type",
+    "analyzed_at",
+    "global_metrics",
+    "raw_metrics",
+    "friction_index",
+    "sections",
+    "warnings",
+    "unsupported",
+    "refactor_guard"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "manifest_version": {
+      "type": "string",
+      "description": "Semantic version of the report manifest format (e.g. \"1.0.0\")."
+    },
+    "analyzer_version": {
+      "type": "string",
+      "description": "Semantic version of the Mnemosyne analyzer that produced this report."
+    },
+    "analysis_mode": {
+      "type": "string",
+      "enum": ["fast", "precise"],
+      "description": "Execution mode used during analysis."
+    },
+    "source_file": {
+      "type": "string",
+      "description": "Absolute or relative path to the analyzed source file."
+    },
+    "source_hash": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$",
+      "description": "SHA-256 hash of the source file contents, prefixed with 'sha256:'."
+    },
+    "document_type": {
+      "type": "string",
+      "enum": ["markdown", "html", "docx", "xlsx"],
+      "description": "Detected or declared format of the source document."
+    },
+    "analyzed_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 date-time at which analysis completed."
+    },
+    "global_metrics": {
+      "type": "object",
+      "description": "Aggregate cognitive-load metrics computed across the entire document.",
+      "required": ["L_txt", "L_vis", "L_spa", "C_load"],
+      "additionalProperties": false,
+      "properties": {
+        "L_txt": {
+          "type": ["number", "null"],
+          "description": "Textual load score for the document."
+        },
+        "L_vis": {
+          "type": ["number", "null"],
+          "description": "Visual load score for the document."
+        },
+        "L_spa": {
+          "type": ["number", "null"],
+          "description": "Spatial/structural load score for the document."
+        },
+        "C_load": {
+          "type": ["number", "null"],
+          "description": "Composite cognitive load score for the document."
+        }
+      }
+    },
+    "raw_metrics": {
+      "type": "object",
+      "description": "Un-normalized raw metric values before weighting or combination.",
+      "required": ["L_txt_raw", "L_vis_raw", "L_spa_raw"],
+      "additionalProperties": false,
+      "properties": {
+        "L_txt_raw": {
+          "type": ["number", "null"],
+          "description": "Raw textual load value."
+        },
+        "L_vis_raw": {
+          "type": ["number", "null"],
+          "description": "Raw visual load value."
+        },
+        "L_spa_raw": {
+          "type": ["number", "null"],
+          "description": "Raw spatial/structural load value."
+        }
+      }
+    },
+    "friction_index": {
+      "type": ["number", "null"],
+      "minimum": 0,
+      "maximum": 100,
+      "description": "Derived readability friction index in the range [0, 100]. Null when insufficient data is available."
+    },
+    "sections": {
+      "type": "array",
+      "description": "Per-section analysis results in document order.",
+      "items": {
+        "$ref": "#/definitions/Section"
+      }
+    },
+    "warnings": {
+      "type": "array",
+      "description": "Non-fatal warnings emitted during analysis.",
+      "items": {
+        "$ref": "#/definitions/Warning"
+      }
+    },
+    "unsupported": {
+      "type": "array",
+      "description": "Metrics that could not be computed for this document, with explanations.",
+      "items": {
+        "$ref": "#/definitions/UnsupportedMetric"
+      }
+    },
+    "refactor_guard": {
+      "$ref": "#/definitions/RefactorGuard"
+    }
+  },
+  "definitions": {
+    "Section": {
+      "type": "object",
+      "description": "Analysis results for a single logical section of the document.",
+      "required": ["id", "title", "span", "metrics", "issues"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for this section within the document."
+        },
+        "title": {
+          "type": "string",
+          "description": "Human-readable section heading or label."
+        },
+        "span": {
+          "type": "object",
+          "description": "Character or line offsets delimiting the section within the source.",
+          "required": ["start", "end"],
+          "additionalProperties": false,
+          "properties": {
+            "start": {
+              "type": "number",
+              "description": "Inclusive start offset."
+            },
+            "end": {
+              "type": "number",
+              "description": "Exclusive end offset."
+            }
+          }
+        },
+        "metrics": {
+          "type": "object",
+          "description": "Cognitive-load metrics scoped to this section.",
+          "required": ["L_txt", "L_vis", "L_spa", "C_load"],
+          "additionalProperties": false,
+          "properties": {
+            "L_txt": {
+              "type": ["number", "null"]
+            },
+            "L_vis": {
+              "type": ["number", "null"]
+            },
+            "L_spa": {
+              "type": ["number", "null"]
+            },
+            "C_load": {
+              "type": ["number", "null"]
+            }
+          }
+        },
+        "issues": {
+          "type": "array",
+          "description": "Detected issues within this section.",
+          "items": {
+            "$ref": "#/definitions/Issue"
+          }
+        }
+      }
+    },
+    "Issue": {
+      "type": "object",
+      "description": "A single detected readability or structural issue.",
+      "required": [
+        "type",
+        "severity",
+        "message",
+        "confidence",
+        "evidence",
+        "rationale",
+        "recommended_action"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "Machine-readable issue type identifier (e.g. 'excessive_nesting')."
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["high", "medium", "low", "info"],
+          "description": "Impact level of the issue."
+        },
+        "message": {
+          "type": "string",
+          "description": "Human-readable description of the issue."
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Confidence score for this issue detection, in the range [0, 1]."
+        },
+        "evidence": {
+          "type": "array",
+          "description": "Verbatim excerpts or references from the source that support this issue.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "rationale": {
+          "type": "string",
+          "description": "Explanation of why this is considered an issue."
+        },
+        "recommended_action": {
+          "type": "string",
+          "description": "Suggested remediation step."
+        }
+      }
+    },
+    "Warning": {
+      "type": "object",
+      "description": "A non-fatal warning emitted by an analysis module.",
+      "required": ["type", "module", "message"],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "Machine-readable warning type identifier."
+        },
+        "module": {
+          "type": "string",
+          "description": "Name of the analyzer module that emitted this warning."
+        },
+        "message": {
+          "type": "string",
+          "description": "Human-readable warning message."
+        }
+      }
+    },
+    "UnsupportedMetric": {
+      "type": "object",
+      "description": "A metric that could not be computed for this document.",
+      "required": ["metric", "reason"],
+      "additionalProperties": false,
+      "properties": {
+        "metric": {
+          "type": "string",
+          "description": "Identifier of the metric that is unsupported."
+        },
+        "reason": {
+          "type": "string",
+          "description": "Explanation of why the metric could not be computed."
+        }
+      }
+    },
+    "RefactorGuard": {
+      "type": "object",
+      "description": "Guard configuration that prevents stale reports from being used as refactor inputs.",
+      "required": ["requires_hash_match", "max_analysis_age_hours"],
+      "additionalProperties": false,
+      "properties": {
+        "requires_hash_match": {
+          "type": "boolean",
+          "description": "When true, the refactorer must verify the source file hash matches source_hash before proceeding."
+        },
+        "max_analysis_age_hours": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Maximum age of this report in hours before it is considered stale for refactoring purposes."
+        }
+      }
+    }
+  }
+}

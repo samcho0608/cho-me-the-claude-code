@@ -1,0 +1,191 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ConceptGraph",
+  "description": "Ontologist output representing the concept graph extracted from a source document, including nodes, directed edges, detected cycles, and forward references.",
+  "type": "object",
+  "required": [
+    "manifest_version",
+    "source_file",
+    "nodes",
+    "edges",
+    "cycles",
+    "forward_references",
+    "warnings"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "manifest_version": {
+      "type": "string",
+      "description": "Semantic version of the concept graph manifest format (e.g. \"1.0.0\")."
+    },
+    "source_file": {
+      "type": "string",
+      "description": "Absolute or relative path to the source document from which this graph was extracted."
+    },
+    "nodes": {
+      "type": "array",
+      "description": "Concepts identified in the document, each representing a distinct term or idea.",
+      "items": {
+        "$ref": "#/definitions/Node"
+      }
+    },
+    "edges": {
+      "type": "array",
+      "description": "Directed relationships between concept nodes.",
+      "items": {
+        "$ref": "#/definitions/Edge"
+      }
+    },
+    "cycles": {
+      "type": "array",
+      "description": "Sets of node ids that form circular dependency cycles in the concept graph.",
+      "items": {
+        "type": "array",
+        "description": "An ordered sequence of node ids forming a single cycle. The last node implicitly edges back to the first.",
+        "items": {
+          "type": "string"
+        },
+        "minItems": 2
+      }
+    },
+    "forward_references": {
+      "type": "array",
+      "description": "Instances where a concept is used before its definition appears in the document.",
+      "items": {
+        "$ref": "#/definitions/ForwardReference"
+      }
+    },
+    "warnings": {
+      "type": "array",
+      "description": "Non-fatal warnings emitted during ontology extraction.",
+      "items": {
+        "$ref": "#/definitions/Warning"
+      }
+    }
+  },
+  "definitions": {
+    "DocumentLocation": {
+      "type": "object",
+      "description": "Pointer to a specific position within the source document.",
+      "required": ["section_id", "token_offset"],
+      "additionalProperties": false,
+      "properties": {
+        "section_id": {
+          "type": "string",
+          "description": "Identifier of the section containing this location."
+        },
+        "token_offset": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Zero-based token offset within the section."
+        }
+      }
+    },
+    "Node": {
+      "type": "object",
+      "description": "A single concept node in the graph.",
+      "required": ["id", "label", "definition_location", "first_use_location"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for this concept node within the graph."
+        },
+        "label": {
+          "type": "string",
+          "description": "Human-readable name or term for the concept."
+        },
+        "definition_location": {
+          "oneOf": [
+            { "$ref": "#/definitions/DocumentLocation" },
+            { "type": "null" }
+          ],
+          "description": "Location in the document where this concept is formally defined. Null if no explicit definition was found."
+        },
+        "first_use_location": {
+          "oneOf": [
+            { "$ref": "#/definitions/DocumentLocation" },
+            { "type": "null" }
+          ],
+          "description": "Location of the earliest use of this concept in the document. Null if the concept was not observed in use."
+        }
+      }
+    },
+    "Edge": {
+      "type": "object",
+      "description": "A directed relationship between two concept nodes.",
+      "required": ["from", "to", "confidence", "type"],
+      "additionalProperties": false,
+      "properties": {
+        "from": {
+          "type": "string",
+          "description": "Id of the source concept node."
+        },
+        "to": {
+          "type": "string",
+          "description": "Id of the target concept node."
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Confidence score for this relationship, in the range [0, 1]."
+        },
+        "type": {
+          "type": "string",
+          "enum": ["prerequisite", "related", "cyclic"],
+          "description": "Semantic type of the relationship: 'prerequisite' means the source must be understood before the target, 'related' indicates loose association, 'cyclic' flags a member of a detected cycle."
+        }
+      }
+    },
+    "ForwardReference": {
+      "type": "object",
+      "description": "A detected instance where a concept is used before its definition appears in document order.",
+      "required": ["concept_id", "used_at_location", "defined_at_location", "confidence"],
+      "additionalProperties": false,
+      "properties": {
+        "concept_id": {
+          "type": "string",
+          "description": "Id of the concept node that is forward-referenced."
+        },
+        "used_at_location": {
+          "$ref": "#/definitions/DocumentLocation",
+          "description": "Location of the forward use of the concept."
+        },
+        "defined_at_location": {
+          "oneOf": [
+            { "$ref": "#/definitions/DocumentLocation" },
+            { "type": "null" }
+          ],
+          "description": "Location where the concept is eventually defined. Null if no definition was found anywhere in the document."
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Confidence score that this is a genuine forward reference, in the range [0, 1]."
+        }
+      }
+    },
+    "Warning": {
+      "type": "object",
+      "description": "A non-fatal warning emitted during ontology extraction.",
+      "required": ["type", "module", "message"],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "Machine-readable warning type identifier."
+        },
+        "module": {
+          "type": "string",
+          "description": "Name of the ontologist module that emitted this warning."
+        },
+        "message": {
+          "type": "string",
+          "description": "Human-readable warning message."
+        }
+      }
+    }
+  }
+}

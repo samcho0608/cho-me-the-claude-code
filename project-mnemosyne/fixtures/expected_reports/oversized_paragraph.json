@@ -1,0 +1,14 @@
+{
+  "_comment": "Expected output stub for fixtures/oversized_paragraph.md",
+  "expected_issues": [
+    {
+      "type": "paragraph_too_long",
+      "severity": "medium",
+      "confidence_min": 0.90,
+      "word_count_min": 150
+    }
+  ],
+  "expected_global_metrics": {
+    "L_txt_min": 0.05
+  }
+}

@@ -1,0 +1,63 @@
+Project Mnemosyne — Implementation Progress
+============================================
+
+Started: 2026-03-24
+
+## Iteration 1
+
+### US-001: Project scaffold + IPC contract document
+Status: IN PROGRESS
+Files created:
+  - project-mnemosyne/ (full directory structure)
+  - docs/ipc_protocol.md (subprocess protocol, exit codes, orchestration sequence)
+  - DEPENDENCIES.md (pip + npm deps for fast and precise modes)
+  - config/mnemosyne.json (default weights, thresholds, confidence bands)
+  - progress.txt (this file)
+
+### Learnings
+- Mixed TS/Python stack: IPC via JSON stdout, one JSON object per invocation
+- Python subprocesses are stateless — temp dir per invocation
+- Exit codes: 0=success, 1=analysis error, 2=invalid input, 3=render unavailable
+- Config precedence: CLI flags > env vars > config/mnemosyne.json > hardcoded defaults
+- L_vis fast mode uses edge density (E/N) not Euler surplus (better for planar graphs)
+- analysis_mode recorded in report; cross-mode refactor guard rejects mismatched pairs
+
+### Patterns discovered
+- All Python modules accept --input/--output file paths and write JSON to output path
+- spatial_mapper.ts runs in-process (no subprocess) — avoids JSON serialization of large DOM data
+- Temp dir cleaned up at end of analyze.ts orchestration (finally block)
+
+=== Session resumed 2026-03-24 ===
+Completed all 14 stories after rate-limit interruption.
+
+US-001 PASS: Scaffold verified (dirs, config, DEPENDENCIES.md, ipc_protocol.md, progress.txt)
+US-002 PASS: 3 JSON schemas written by prior session agent (cognition_report, refactor_log, concept_graph)
+US-003 PASS: core/metrics.py verified; added compute_scores() public wrapper for importability criterion
+US-004 PASS: All 4 parsers present (md, html, docx, xlsx); md_parser tested — sections=3 paragraphs=4
+US-005 PASS: skills/mermaid_engine.py — fast-mode regex scoring; L_vis_global=1.0 on spaghetti fixture
+US-006 PASS: skills/spatial_mapper.ts — ordinal IU distance; XLSX sheet-change penalty 0.3
+US-007 PASS: core/scoring/concept_graph.py — forward reference detection with confidence bands
+US-008 PASS: core/scoring/ergonomist.py — paragraph/sentence/table rules; fixed Python 3.9 Optional syntax
+US-009 PASS: core/validation/report_validator.py — hash/staleness/mode checks; sentinel _fail() pattern
+US-010 PASS: commands/analyze.ts — full pipeline orchestrator; writes cognition_report.json + summary.md
+US-011 PASS: commands/refactor.ts — safe transforms; runs validator first; writes log+plan+refactored file
+US-012 PASS: 7 fixtures (simple_doc, forward_reference, oversized_paragraph, spaghetti_mermaid,
+             overloaded_table, missing_definition, low_confidence) + 7 expected_report stubs
+US-013 PASS: core/telemetry.py — structured log lines; auto-creates output/; never crashes caller
+US-014 PASS: README.md (formulas + limitations), system_prompts/, subagents/ all written
+
+Key fix applied:
+  - Python 3.9 does not support `str | None` union type syntax; replaced with Optional[] or bare annotation
+
+Files added this session (16 new + 1 modified):
+  skills/mermaid_engine.py, skills/spatial_mapper.ts
+  core/scoring/__init__.py, core/scoring/concept_graph.py, core/scoring/ergonomist.py
+  core/telemetry.py
+  core/validation/__init__.py, core/validation/report_validator.py
+  commands/analyze.ts, commands/refactor.ts
+  tsconfig.json, package.json
+  fixtures/ (7 md files + 7 expected_report stubs)
+  system_prompts/ontologist.system.md, system_prompts/ergonomist.system.md
+  subagents/ontologist.md, subagents/ergonomist.md
+  README.md
+  core/metrics.py (added compute_scores() wrapper)

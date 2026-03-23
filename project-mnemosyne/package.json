@@ -1,0 +1,19 @@
+{
+  "name": "project-mnemosyne",
+  "version": "0.1.0",
+  "description": "Local-first document cognitive load analyzer and refactoring tool",
+  "private": true,
+  "scripts": {
+    "build": "tsc --noEmit",
+    "compile": "tsc",
+    "analyze": "ts-node commands/analyze.ts",
+    "refactor": "ts-node commands/refactor.ts"
+  },
+  "dependencies": {
+    "typescript": "^5.4.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "ts-node": "^10.9.0"
+  }
+}

@@ -1,6 +1,6 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
-  "name": "oh-my-claude-chode",
+  "name": "cho-me-the-claude-code",
   "description": "A curated marketplace of Claude Code plugins for technical document analysis, refactoring, and productivity.",
   "owner": {
     "name": "samcho"
